@@ -7,5 +7,24 @@
     <link rel="stylesheet" href="styles.css" />
     <script defer src="app.js"></script>
   </head>
-  <body></body>
+  <body>
+    <section class="container">
+      <div class="form-column">
+        <form id="varDump-form">
+          <label for="varDump-input">Wprowadź wynik funkcji var_dump:</label>
+          <textarea
+            id="varDump-input"
+            name="varDump-input"
+            rows="20"
+            cols="40"
+          ></textarea>
+          <button type="submit">Przekształć w array</button>
+        </form>
+      </div>
+      <div class="output-column">
+        <span>PHP array:</span>
+        <div class="output"></div>
+      </div>
+    </section>
+  </body>
 </html>
