@@ -4,6 +4,8 @@ let userInput;
 
 varDumpForm.addEventListener("submit", (e) => {
   e.preventDefault();
+  outputDiv.innerText = "";
+
   userInput = document.getElementById("varDump-input").value;
 
   const convertedInput = varDumpConvert(userInput);
@@ -19,9 +21,6 @@ const typeMap = {
   NULL: () => "null",
 };
 
-let result = "";
-let nested = 0;
-
 function getResult(valuePart, key) {
   const type = Object.keys(typeMap).find((t) => valuePart.startsWith(t));
   const value = type ? typeMap[type](valuePart) : "";
@@ -29,6 +28,9 @@ function getResult(valuePart, key) {
 }
 
 function varDumpConvert(input) {
+  let result = "";
+  let nested = 0;
+
   const lines = input.trim().split("[");
 
   lines.forEach((line) => {
