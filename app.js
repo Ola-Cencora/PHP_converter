@@ -11,17 +11,25 @@ varDumpForm.addEventListener("submit", (e) => {
   outputDiv.innerText = convertedInput;
 });
 
-function varDumpConvert(input) {
-  const typeMap = {
-    string: (val) => `'${val.match(/"(.*)"/)?.[1] || ""}'`,
-    int: (val) => val.match(/\d+/)?.[0],
-    float: (val) => val.match(/\d+\.\d+/)?.[0],
-    bool: (val) => (val.includes("true") ? "true" : "false"),
-    NULL: () => "null",
-  };
+const typeMap = {
+  string: (val) => `'${val.match(/"(.*)"/)?.[1] || ""}'`,
+  int: (val) => val.match(/\d+/)?.[0],
+  float: (val) => val.match(/\d+\.\d+/)?.[0],
+  bool: (val) => (val.includes("true") ? "true" : "false"),
+  NULL: () => "null",
+};
 
+let result = "";
+let nested = 0;
+
+function getResult(valuePart, key) {
+  const type = Object.keys(typeMap).find((t) => valuePart.startsWith(t));
+  const value = type ? typeMap[type](valuePart) : "";
+  return `${key} => ${value},\n`;
+}
+
+function varDumpConvert(input) {
   const lines = input.trim().split("[");
-  let result = "";
 
   lines.forEach((line) => {
     const trimmed = line.trim();
@@ -30,12 +38,21 @@ function varDumpConvert(input) {
       const [keyPart, valuePart] = trimmed
         .split("=>")
         .map((part) => part.trim());
-      const key = `'${keyPart.match(/["'](.*)["']/)?.[1] || keyPart}'`;
-      const type = Object.keys(typeMap).find((t) => valuePart.startsWith(t));
-      const value = type ? typeMap[type](valuePart) : "";
-      result += `${key} => ${value},\n`;
+      const key = `'${keyPart.match(/["'](.*)["']/)?.[1]}'`;
+
+      if (key.replace(/['"]/g, "") === "Array") {
+        result += `${key} => [\n`;
+        nested++;
+      } else if (trimmed.slice(-1) === "}") {
+        result += `${getResult(valuePart, key)}],\n`;
+        nested--;
+      } else {
+        result += getResult(valuePart, key);
+      }
     }
   });
 
-  return `$array = [\n ${result.trimEnd(",\n")} \n];`;
+  if (nested >= 0) result += "]";
+
+  return `$array = [\n${result.trimEnd().replace(/,$/, "")};`;
 }
