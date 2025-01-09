@@ -21,10 +21,12 @@ const typeMap = {
   NULL: () => "null",
 };
 
-function getResult(valuePart, key) {
+const getIndent = (level) => "  ".repeat(level);
+
+function getResult(valuePart, key, nested) {
   const type = Object.keys(typeMap).find((t) => valuePart.startsWith(t));
   const value = type ? typeMap[type](valuePart) : "";
-  return `${key} => ${value},\n`;
+  return `${getIndent(nested)}${key} => ${value},\n`;
 }
 
 function varDumpConvert(input) {
@@ -43,13 +45,14 @@ function varDumpConvert(input) {
       const key = `'${keyPart.match(/["'](.*)["']/)?.[1]}'`;
 
       if (key.replace(/['"]/g, "") === "Array") {
-        result += `${key} => [\n`;
+        result += `${getIndent(nested + 1)}${key} => [\n`;
         nested++;
       } else if (trimmed.slice(-1) === "}") {
-        result += `${getResult(valuePart, key)}],\n`;
+        result += getResult(valuePart, key, nested + 1);
+        result += `${getIndent(nested)}],\n`;
         nested--;
       } else {
-        result += getResult(valuePart, key);
+        result += getResult(valuePart, key, nested + 1);
       }
     }
   });
