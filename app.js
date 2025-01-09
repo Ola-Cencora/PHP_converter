@@ -100,5 +100,32 @@ function varDumpConvert(input) {
 // JSON CONVERT FUNCTION
 
 function jsonConvert(input) {
-  //...
+  const obj = JSON.parse(input);
+
+  let result = "";
+
+  for (let key in obj) {
+    result += `\n\t'${key}' => [`;
+
+    for (let subKey in obj[key]) {
+      let array = obj[key][subKey];
+
+      result += `\n\t\t '${subKey}' => [`;
+
+      array.forEach((element, index) => {
+        result += `\n\t\t\t [`;
+
+        for (let elementKey in element) {
+          let value = element[elementKey];
+          result += `\n\t\t\t\t'${elementKey}' => '${value}',`;
+        }
+
+        result = `${result.slice(0, -1)}\n\t\t\t],`;
+      });
+
+      result = `${result.slice(0, -1)}\n\t\t],`.slice(0, -1) + "\n\t],";
+    }
+  }
+
+  return `$array = [${result.slice(0, -1)}\n];`;
 }

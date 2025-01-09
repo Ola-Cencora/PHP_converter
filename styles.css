@@ -67,5 +67,7 @@ button:hover {
   width: 80%;
   border-radius: 4px;
   white-space: pre-wrap;
+  max-height: 300px;
+  overflow-y: auto; 
 }
 
