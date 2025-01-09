@@ -1,17 +1,52 @@
-const varDumpForm = document.getElementById("varDump-form");
-const outputDiv = document.querySelector(".output");
-let userInput;
+// CHOOSING THE RIGHT TOOL
 
-varDumpForm.addEventListener("submit", (e) => {
+const vardumpButton = document.querySelector("#vardump-btn");
+const jsonButton = document.querySelector("#json-btn");
+const formName = document.querySelector("#label-convertInput");
+const userInput = document.querySelector("#convert-input");
+let clickedButton = vardumpButton;
+
+const clean = () => {
+  userInput.value = "";
+  outputDiv.innerText = "";
+};
+
+vardumpButton.addEventListener("click", () => {
+  clickedButton = vardumpButton;
+  formName.innerText = "Wprowadź wynik funkcji var_dump:";
+  clean();
+});
+jsonButton.addEventListener("click", () => {
+  clickedButton = jsonButton;
+  formName.innerText = "Wprowadź JSON:";
+  clean();
+});
+
+// ADDING CORRECT OUTPUT
+
+const convertForm = document.querySelector("#convert-form");
+const outputDiv = document.querySelector(".output");
+
+convertForm.addEventListener("submit", (e) => {
   e.preventDefault();
   outputDiv.innerText = "";
 
-  userInput = document.getElementById("varDump-input").value;
+  const inputValue = userInput.value;
+  let convertedOutput;
 
-  const convertedInput = varDumpConvert(userInput);
+  switch (clickedButton) {
+    case vardumpButton:
+      convertedOutput = varDumpConvert(inputValue);
+      break;
+    case jsonButton:
+      convertedOutput = jsonConvert(inputValue);
+      break;
+  }
 
-  outputDiv.innerText = convertedInput;
+  outputDiv.innerText = convertedOutput;
 });
+
+// VAR_DUMP CONVERT FUNCTION
 
 const typeMap = {
   string: (val) => `'${val.match(/"(.*)"/)?.[1] || ""}'`,
@@ -60,4 +95,10 @@ function varDumpConvert(input) {
   if (nested >= 0) result += "]";
 
   return `$array = [\n${result.trimEnd().replace(/,$/, "")};`;
+}
+
+// JSON CONVERT FUNCTION
+
+function jsonConvert(input) {
+  //...
 }

@@ -8,13 +8,19 @@
     <script defer src="app.js"></script>
   </head>
   <body>
+    <div>
+      <button id="vardump-btn">var_dump</button>
+      <button id="json-btn">JSON</button>
+    </div>
     <section class="container">
       <div class="form-column">
-        <form id="varDump-form">
-          <label for="varDump-input">Wprowadź wynik funkcji var_dump:</label>
+        <form id="convert-form">
+          <label for="convert-input" id="label-convertInput"
+            >Wprowadź wynik funkcji var_dump:</label
+          >
           <textarea
-            id="varDump-input"
-            name="varDump-input"
+            id="convert-input"
+            name="convert-input"
             rows="20"
             cols="40"
           ></textarea>
