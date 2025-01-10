@@ -107,33 +107,38 @@ function varDumpConvert(input) {
 
 // JSON CONVERT FUNCTION
 
-function jsonConvert(input) {
+function jsonConvert(input, maxDepth = 50) {
   const obj = JSON.parse(input);
 
-  let result = "";
-
-  for (let key in obj) {
-    result += `\n\t'${key}' => [`;
-
-    for (let subKey in obj[key]) {
-      let array = obj[key][subKey];
-
-      result += `\n\t\t '${subKey}' => [`;
-
-      array.forEach((element, index) => {
-        result += `\n\t\t\t [`;
-
-        for (let elementKey in element) {
-          let value = element[elementKey];
-          result += `\n\t\t\t\t'${elementKey}' => '${value}',`;
-        }
-
-        result = `${result.slice(0, -1)}\n\t\t\t],`;
-      });
-
-      result = `${result.slice(0, -1)}\n\t\t],`.slice(0, -1) + "\n\t],";
+  function jsonConvertInner(data, indentLevel = 1) {
+    if (indentLevel > maxDepth) {
+      throw new Error("Zbyt duży poziom zagnieżdżenia");
     }
+
+    let result = "";
+    const indent = "\t".repeat(indentLevel);
+
+    if (Array.isArray(data)) {
+      result += "[\n";
+      data.forEach((element) => {
+        result += `${indent}\t${jsonConvertInner(element, indentLevel + 1)},\n`;
+      });
+      result += `${indent}]`;
+    } else if (typeof data === "object" && data !== null) {
+      result += "[\n";
+      for (let key in data) {
+        result += `${indent}\t'${key}' => ${jsonConvertInner(
+          data[key],
+          indentLevel + 1
+        )},\n`;
+      }
+      result += `${indent}]`;
+    } else {
+      result += `'${data}'`;
+    }
+
+    return result;
   }
 
-  return `$array = [${result.slice(0, -1)}\n];`;
+  return `$array = ${jsonConvertInner(obj)};`;
 }
