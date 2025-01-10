@@ -46,6 +46,14 @@ convertForm.addEventListener("submit", (e) => {
   outputDiv.innerText = convertedOutput;
 });
 
+// COPY BUTTON
+
+const copyButton = document.querySelector("#copy-btn");
+copyButton.addEventListener("click", () => {
+  const copyTxt = outputDiv.innerText;
+  navigator.clipboard.writeText(copyTxt);
+});
+
 // VAR_DUMP CONVERT FUNCTION
 
 const typeMap = {
